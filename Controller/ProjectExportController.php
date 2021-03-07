@@ -40,17 +40,9 @@ class ProjectExportController extends BaseController
                       border-collapse: collapse;
                       text-align: center;
                       font-family: 'Arial';
-                      width: 80%;
+                      width: 100%;
                       border-radius: 10px;
                       table-layout: fixed;
-                    }
-
-                    .export-table tr:firt-child {
-                      border-radius: 0 0 8px 8px;
-                    }
-
-                    .export-table tr:last-child {
-                      border-radius: 8px 8px 0 0;
                     }
 
                     .export-table thead tr {
@@ -73,20 +65,68 @@ class ProjectExportController extends BaseController
                     .export-table tr:nth-child(2n) {
                       background: #f5f5f5;
                     }
+
+                    .sum-cell {
+                      background: #ccc;
+                      color: black;
+                    }
                   </style>";
-                $table .= $styles;
-                $i = 0;
+                $table .= $styles; // Add CSS
+                $i = 0; // For identifying first row
+                $hoursIndex = 0;
+                $estimatedHoursIndex = 0;
+                $creationDateIndex = 0;
+                $startDateIndex = 0;
+                $dueDateIndex = 0;
+                $sumHours = 0.0;
+                $sumEstimated = 0.0;
 
                 foreach($data as $row) {
+                  $j = 0; // For identifying cell in row
                   if($i == 0) {
                     $table .= "<thead>";
                   }
 
                   $table .= "<tr>";
                   foreach($row as $cell) {
-                    $i == 0 
-                      ? $table .= "<th>" . $cell . "</th> "
-                      : $table .= "<td>" . $cell . "</td> ";
+                    if($i == 0 ){
+                      if($cell == "Time spent") {
+                        $hoursIndex = $j;
+                      } 
+                      if($cell == "Time estimated") {
+                        $estimatedHoursIndex = $j;
+                      } 
+                      if($cell == "Creation date") {
+                        $creationDateIndex = $j;
+                      } 
+                      if($cell == "Start date") {
+                        $startDateIndex = $j;
+                      } 
+                      if($cell == "Due date") {
+                        $dueDateIndex = $j;
+                      } 
+
+                      $table .= "<th>" . $cell . "</th> ";
+                    }else {
+                      if( (($creationDateIndex != 0 && $j == $creationDateIndex) || ($startDateIndex != 0 && $j == $startDateIndex) || $dueDateIndex != 0 && $j == $dueDateIndex) && $j != 0) {
+                        $date = date_create($cell);
+                        $table .= "<td>" . date_format($date, "d-m-Y") . "</td> ";
+                      }else {
+                        $table .= "<td>" . $cell . "</td> ";
+                      }
+
+
+                      
+                    }
+
+                    if($hoursIndex != 0 && $j == $hoursIndex  && $j != 0) {
+                      $sumHours +=  floatval($cell);
+                    }
+
+                    if($estimatedHoursIndex != 0 && $j == $estimatedHoursIndex && $j != 0) {
+                      $sumEstimated += floatval($cell);
+                    }
+                    $j++;
                   }
 
                   $table .= "</tr>";
@@ -97,9 +137,16 @@ class ProjectExportController extends BaseController
                   $i++;
                 }
 
+                $sumRow = "<tr>";
+                for($a = 0;$a < $estimatedHoursIndex;$a++) {
+                  $sumRow .= "<td></td>";
+                }
+                $sumRow .= "<td class='sum-cell'>Sum: <b>" . $sumEstimated . "</b></td>";
+                $sumRow .= "<td class='sum-cell'>Sum: <b>" . $sumHours . "</b></td></tr>";
+
                 $this->response->html(
                   "<table class='export-table'>" .
-                  $table
+                  $table . $sumRow
                   . "</table>"
                 );
 
