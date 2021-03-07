@@ -1,0 +1,48 @@
+.export-checklist {
+  margin-top: 1em;
+}
+
+.checklist-row {
+  display: flex;
+  width: 100%;
+  max-width: 13%;
+  justify-content: space-between;
+  align-items: center;
+  background: #eee;
+  color: #000;
+  padding: 0.5em;
+}
+
+.checklist-row:nth-child(2n) {
+  background: #d6d6d6;
+  color: #000;
+}
+
+.checklist-row input[type="checkbox"] {
+  -webkit-appearance:none;
+  width: 1.4em;
+  height: 1.4em;
+  background:white;
+  border: 2px solid #333;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checklist-row input[type='checkbox']:checked {
+  background: #333;
+}
+
+.checklist-row input[type='checkbox']:checked:after {
+  content: '✓';
+  color: #FFF;
+  display: inline;
+}
+
+.checkbox-title, .checklist-row label {
+  margin: 0;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
