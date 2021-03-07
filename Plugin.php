@@ -9,24 +9,23 @@ class Plugin extends Base
 {
     public function initialize()
     {
-      $this->template->setTemplateOverride('export/tasks', 'ProjectExport:export/tasks');
-      $this->hook->on("template:layout:css", array("template" => "plugins/ProjectExport/Assets/ProjectOverview.css"));
-    } 
+        $this->template->setTemplateOverride('export/tasks', 'ProjectExport:export/tasks');
+        $this->hook->on("template:layout:css", array("template" => "plugins/ProjectExport/Assets/ProjectOverview.css"));
+    }
 
     public function onStartup()
     {
-        Translator::load($this->languageModel->getCurrentLanguage(), __DIR__.'/Locale');
+        Translator::load($this->languageModel->getCurrentLanguage(), __DIR__ . '/Locale');
     }
 
     public function getClasses()
     {
-      return array(
-        'Plugin\ProjectExport\Export' => array(
-        'TaskExport',
-        )
-      );
+        return array(
+            'Plugin\ProjectExport\Export' => array(
+                'TaskExport',
+            ),
+        );
     }
-
 
     public function getPluginName()
     {
@@ -53,4 +52,3 @@ class Plugin extends Base
         return 'https://github.com/kovalmatej/ProjectExport';
     }
 }
-

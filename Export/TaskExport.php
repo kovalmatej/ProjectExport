@@ -29,7 +29,7 @@ class TaskExport extends Base
      */
     public function export($project_id, $from, $to, $id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent)
     {
-        $tasks = $this->getTasks($project_id, $from, $to, $id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent );
+        $tasks = $this->getTasks($project_id, $from, $to, $id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent);
         $taskIds = array_column($tasks, 'id');
         $tags = $this->taskTagModel->getTagsByTaskIds($taskIds);
         $colors = $this->colorModel->getList();
@@ -63,37 +63,37 @@ class TaskExport extends Base
         }
 
         $columnsCall = [];
-        if($id){
-          array_push($columnsCall, TaskModel::TABLE . '.id');
+        if ($id) {
+            array_push($columnsCall, TaskModel::TABLE . '.id');
         }
-        if($title){
-          array_push($columnsCall, TaskModel::TABLE . '.title');
-        } 
-        if($description){
-          array_push($columnsCall, TaskModel::TABLE . '.description');
+        if ($title) {
+            array_push($columnsCall, TaskModel::TABLE . '.title');
         }
-        if($column){
-          array_push($columnsCall, ColumnModel::TABLE . '.title AS column_title');
+        if ($description) {
+            array_push($columnsCall, TaskModel::TABLE . '.description');
         }
-        if($status) {
-          array_push($columnsCall, TaskModel::TABLE . '.is_active');        
+        if ($column) {
+            array_push($columnsCall, ColumnModel::TABLE . '.title AS column_title');
         }
-        if($creation_date){
-          array_push($columnsCall, TaskModel::TABLE . '.date_creation');
+        if ($status) {
+            array_push($columnsCall, TaskModel::TABLE . '.is_active');
         }
-        if($start_date){
-          array_push($columnsCall, TaskModel::TABLE . '.date_started');
+        if ($creation_date) {
+            array_push($columnsCall, TaskModel::TABLE . '.date_creation');
         }
-        if($due_date) {
-          array_push($columnsCall, TaskModel::TABLE . '.date_due');
+        if ($start_date) {
+            array_push($columnsCall, TaskModel::TABLE . '.date_started');
         }
-        if($time_estimated){
-          array_push($columnsCall, TaskModel::TABLE . '.time_estimated');
+        if ($due_date) {
+            array_push($columnsCall, TaskModel::TABLE . '.date_due');
         }
-        if($time_spent){
-          array_push($columnsCall, TaskModel::TABLE . '.time_spent');
+        if ($time_estimated) {
+            array_push($columnsCall, TaskModel::TABLE . '.time_estimated');
         }
-        
+        if ($time_spent) {
+            array_push($columnsCall, TaskModel::TABLE . '.time_spent');
+        }
+
         return $this->db->table(TaskModel::TABLE)
             ->columns(...$columnsCall
             )
@@ -106,7 +106,7 @@ class TaskExport extends Base
             ->gte(TaskModel::TABLE . '.date_creation', $from)
             ->lte(TaskModel::TABLE . '.date_creation', $to)
             ->eq(TaskModel::TABLE . '.project_id', $project_id)
-            ->asc(TaskModel::TABLE.'.id')
+            ->asc(TaskModel::TABLE . '.id')
             ->findAll();
     }
 
@@ -121,10 +121,10 @@ class TaskExport extends Base
      */
     protected function format(array &$task)
     {
-        if($task['is_active'] != ''){
-           $task['is_active'] = $task['is_active'] == TaskModel::STATUS_OPEN ? e('Open') : e('Closed');
+        if ($task['is_active'] != '') {
+            $task['is_active'] = $task['is_active'] == TaskModel::STATUS_OPEN ? e('Open') : e('Closed');
         }
-       
+
         $task = $this->dateParser->format(
             $task,
             array('date_due', 'date_modification', 'date_creation', 'date_started', 'date_completed'),
@@ -142,39 +142,39 @@ class TaskExport extends Base
      */
     protected function getColumns($id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent)
     {
-      $columns = [];
+        $columns = [];
 
-      if($id){
-        array_push($columns, e('Task Id'));
-      }
-      if($title){
-        array_push($columns, e('Title'));
-      } 
-      if($description){
-        array_push($columns, e('Description'));
-      }
-      if($column){
-        array_push($columns, e('Column'));
-      }
-      if($status) {
-        array_push($columns, e('Status'));        
-      }
-      if($creation_date){
-        array_push($columns, e('Creation date'));
-      }
-      if($start_date){
-        array_push($columns, e('Start date'));
-      }
-      if($due_date) {
-        array_push($columns, e('Due date'));
-      }
-      if($time_estimated){
-        array_push($columns, e('Time estimated'));
-      }
-      if($time_spent){
-        array_push($columns, e('Time spent'));
-      }
+        if ($id) {
+            array_push($columns, e('Task Id'));
+        }
+        if ($title) {
+            array_push($columns, e('Title'));
+        }
+        if ($description) {
+            array_push($columns, e('Description'));
+        }
+        if ($column) {
+            array_push($columns, e('Column'));
+        }
+        if ($status) {
+            array_push($columns, e('Status'));
+        }
+        if ($creation_date) {
+            array_push($columns, e('Creation date'));
+        }
+        if ($start_date) {
+            array_push($columns, e('Start date'));
+        }
+        if ($due_date) {
+            array_push($columns, e('Due date'));
+        }
+        if ($time_estimated) {
+            array_push($columns, e('Time estimated'));
+        }
+        if ($time_spent) {
+            array_push($columns, e('Time spent'));
+        }
 
-      return array(...$columns);
+        return array(...$columns);
     }
 }

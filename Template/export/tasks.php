@@ -2,7 +2,9 @@
 
 <p class="alert alert-info"><?= t('This report contains all tasks information for the given date range.') ?></p>
 
-<form class="js-modal-ignore-form" method="post" action="<?= $this->url->href('ProjectExportController', 'tasks', array('project_id' => $project['id'], 'plugin' => 'ProjectExport')) ?>" autocomplete="off">
+<form class="js-modal-ignore-form" method="post"
+  action="<?= $this->url->href('ProjectExportController', 'tasks', array('project_id' => $project['id'], 'plugin' => 'ProjectExport')) ?>"
+  autocomplete="off">
   <div class="form-top">
     <div class="form-left">
       <div class="checklist-row"><?= $this->form->checkbox('TaskId', t('ID'), 1, true) ?></div>
@@ -16,23 +18,23 @@
       <div class="checklist-row"><?= $this->form->checkbox('TimeEstimated', t('Time estimated'), 1, true) ?></div>
       <div class="checklist-row"><?= $this->form->checkbox('TimeSpent', t('Time spent'), 1, true) ?></div>
     </div>
-    
-    <div class="form-right"> 
+
+    <div class="form-right">
       <?= $this->form->csrf() ?>
       <?= $this->form->hidden('project_id', $values) ?>
       <?= $this->form->date(t('Start date'), 'from', $values) ?>
       <?= $this->form->date(t('End date'), 'to', $values) ?>
-    </div> 
+    </div>
   </div>
 
 
   <div>
     <div class="form-actions">
-        <button type="submit" class="btn btn-blue js-form-export"><?= t('Export') ?></button>
-        <?= t('or') ?>
-        <?= $this->url->link(t('cancel'), 'ProjectExportController',  'tasks', array('project_id' => $project['id'], 'plugin' => 'ProjectExport'), false, 'js-modal-close') ?>
+      <button type="submit" class="btn btn-blue js-form-export"><?= t('Export') ?></button>
+      <?= t('or') ?>
+      <?= $this->url->link(t('cancel'), 'ProjectExportController',  'tasks', array('project_id' => $project['id'], 'plugin' => 'ProjectExport'), false, 'js-modal-close') ?>
     </div>
-  </div>  
+  </div>
 
-    
+
 </form>
