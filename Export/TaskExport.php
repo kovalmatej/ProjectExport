@@ -36,7 +36,7 @@ class TaskExport extends Base
         $results = array($this->getColumns($id, $title, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent));
 
         foreach ($tasks as &$task) {
-            $task = $this->format($task, $colors, $tags);
+            $task = $this->format($task);
             $results[] = array_values($task);
         }
 
@@ -116,23 +116,15 @@ class TaskExport extends Base
      * @param  array  $tags
      * @return array
      */
-    protected function format(array &$task, array $colors, array &$tags)
+    protected function format(array &$task)
     {
         $task['is_active'] = $task['is_active'] == TaskModel::STATUS_OPEN ? e('Open') : e('Closed');
-        $task['color_id'] = $colors[$task['color_id']];
-        $task['score'] = $task['score'] ?: 0;
-        $task['tags'] = '';
 
         $task = $this->dateParser->format(
             $task,
             array('date_due', 'date_modification', 'date_creation', 'date_started', 'date_completed'),
             $this->dateParser->getUserDateTimeFormat()
         );
-
-        if (isset($tags[$task['id']])) {
-            $taskTags = array_column($tags[$task['id']], 'name');
-            $task['tags'] = implode(', ', $taskTags);
-        }
 
         return $task;
     }
