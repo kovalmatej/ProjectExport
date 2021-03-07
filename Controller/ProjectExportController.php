@@ -22,6 +22,7 @@ class ProjectExportController extends BaseController
             
             $id = $this->request->getRawValue('TaskId');
             $title = $this->request->getRawValue('Title');
+            $description = $this->request->getRawValue('Description');
             $column = $this->request->getRawValue('Column');
             $status = $this->request->getRawValue('Status');
             $due_date = $this->request->getRawValue('DueDate');
@@ -31,7 +32,7 @@ class ProjectExportController extends BaseController
             $time_spent = $this->request->getRawValue('TimeSpent');
 
             if ($from && $to) {
-                $data = $this->$model->$method($project['id'], $from, $to, $id, $title, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent);
+                $data = $this->$model->$method($project['id'], $from, $to, $id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent);
 
                 $table = "";
                 $styles = "
@@ -41,8 +42,7 @@ class ProjectExportController extends BaseController
                       text-align: center;
                       font-family: 'Arial';
                       width: 100%;
-                      border-radius: 10px;
-                      table-layout: fixed;
+                      table-layout: auto;
                     }
 
                     .export-table thead tr {
@@ -52,14 +52,13 @@ class ProjectExportController extends BaseController
                     }
 
                     .export-table tr {
-                      height: 50px;
                       font-size: 15px;
                       color: grey;
                     }
 
                     .export-table td, .export-table th {
-                      padding: 0;
-                      width: 100%;
+                      padding: 1em 0;
+                      max-width: 400px;
                     }
 
                     .export-table tr:nth-child(2n) {
@@ -80,8 +79,11 @@ class ProjectExportController extends BaseController
                 $dueDateIndex = 0;
                 $sumHours = 0.0;
                 $sumEstimated = 0.0;
+                $hoursIndexFound = false;
+                $estimatedHoursIndexFound = false;
 
                 foreach($data as $row) {
+                  $done = false; // For identifying if this row is in column Done
                   $j = 0; // For identifying cell in row
                   if($i == 0) {
                     $table .= "<thead>";
@@ -92,9 +94,11 @@ class ProjectExportController extends BaseController
                     if($i == 0 ){
                       if($cell == "Time spent") {
                         $hoursIndex = $j;
+                        $hoursIndexFound = true;
                       } 
                       if($cell == "Time estimated") {
                         $estimatedHoursIndex = $j;
+                        $estimatedHoursIndexFound = true;
                       } 
                       if($cell == "Creation date") {
                         $creationDateIndex = $j;
@@ -105,27 +109,29 @@ class ProjectExportController extends BaseController
                       if($cell == "Due date") {
                         $dueDateIndex = $j;
                       } 
-
                       $table .= "<th>" . $cell . "</th> ";
                     }else {
+                      if($cell == "Done" || $cell == "Finished") {
+                        $done = true;
+                      }
                       if( (($creationDateIndex != 0 && $j == $creationDateIndex) || ($startDateIndex != 0 && $j == $startDateIndex) || $dueDateIndex != 0 && $j == $dueDateIndex) && $j != 0) {
                         $date = date_create($cell);
                         $table .= "<td>" . date_format($date, "d-m-Y") . "</td> ";
                       }else {
                         $table .= "<td>" . $cell . "</td> ";
                       }
-
-
-                      
                     }
 
-                    if($hoursIndex != 0 && $j == $hoursIndex  && $j != 0) {
-                      $sumHours +=  floatval($cell);
-                    }
+                    if($done) {
+                      if($hoursIndex != 0 && $j == $hoursIndex  && $j != 0) {
+                        $sumHours +=  floatval($cell);
+                      }
 
-                    if($estimatedHoursIndex != 0 && $j == $estimatedHoursIndex && $j != 0) {
-                      $sumEstimated += floatval($cell);
+                      if($estimatedHoursIndex != 0 && $j == $estimatedHoursIndex && $j != 0) {
+                        $sumEstimated += floatval($cell);
+                      }
                     }
+                    
                     $j++;
                   }
 
@@ -141,9 +147,17 @@ class ProjectExportController extends BaseController
                 for($a = 0;$a < $estimatedHoursIndex;$a++) {
                   $sumRow .= "<td></td>";
                 }
-                $sumRow .= "<td class='sum-cell'>Sum: <b>" . $sumEstimated . "</b></td>";
-                $sumRow .= "<td class='sum-cell'>Sum: <b>" . $sumHours . "</b></td></tr>";
 
+                if($estimatedHoursIndexFound) {
+                  $sumRow .= "<td class='sum-cell'>Sum: <b>" . $sumEstimated . "</b> (Done)</td>";
+                }
+                if($hoursIndexFound) {
+                   $sumRow .= "<td class='sum-cell'>Sum: <b>" . $sumHours . "</b> (Done)</td></tr>";
+                }
+                if(!$hoursIndexFound && !$estimatedHoursIndexFound) {
+                  $sumRow = "";
+                }
+               
                 $this->response->html(
                   "<table class='export-table'>" .
                   $table . $sumRow

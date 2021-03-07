@@ -7,6 +7,7 @@
     <div class="form-left">
       <div class="checklist-row"><?= $this->form->checkbox('TaskId', t('ID'), 1, true) ?></div>
       <div class="checklist-row"><?= $this->form->checkbox('Title', t('Title'), 1, true) ?></div>
+      <div class="checklist-row"><?= $this->form->checkbox('Description', t('Description'), 1, true) ?></div>
       <div class="checklist-row"><?= $this->form->checkbox('Column', t('Column'), 1, true) ?></div>
       <div class="checklist-row"><?= $this->form->checkbox('Status', t('Status'), 1, true) ?></div>
       <div class="checklist-row"><?= $this->form->checkbox('DueDate', t('Due date'), 1, true) ?></div>

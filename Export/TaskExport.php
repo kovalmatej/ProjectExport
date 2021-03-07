@@ -27,13 +27,13 @@ class TaskExport extends Base
      * @param  mixed   $to         End date (timestamp or user formatted date)
      * @return array
      */
-    public function export($project_id, $from, $to, $id, $title, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent)
+    public function export($project_id, $from, $to, $id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent)
     {
-        $tasks = $this->getTasks($project_id, $from, $to, $id, $title, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent );
+        $tasks = $this->getTasks($project_id, $from, $to, $id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent );
         $taskIds = array_column($tasks, 'id');
         $tags = $this->taskTagModel->getTagsByTaskIds($taskIds);
         $colors = $this->colorModel->getList();
-        $results = array($this->getColumns($id, $title, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent));
+        $results = array($this->getColumns($id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent));
 
         foreach ($tasks as &$task) {
             $task = $this->format($task);
@@ -52,7 +52,7 @@ class TaskExport extends Base
      * @param  mixed   $to         End date (timestamp or user formatted date)
      * @return array
      */
-    protected function getTasks($project_id, $from, $to, $id, $title, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent)
+    protected function getTasks($project_id, $from, $to, $id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent)
     {
         if (!is_numeric($from)) {
             $from = $this->dateParser->removeTimeFromTimestamp($this->dateParser->getTimestamp($from));
@@ -69,6 +69,9 @@ class TaskExport extends Base
         if($title){
           array_push($columnsCall, TaskModel::TABLE . '.title');
         } 
+        if($description){
+          array_push($columnsCall, TaskModel::TABLE . '.description');
+        }
         if($column){
           array_push($columnsCall, ColumnModel::TABLE . '.title AS column_title');
         }
@@ -90,7 +93,7 @@ class TaskExport extends Base
         if($time_spent){
           array_push($columnsCall, TaskModel::TABLE . '.time_spent');
         }
-
+        
         return $this->db->table(TaskModel::TABLE)
             ->columns(...$columnsCall
             )
@@ -118,8 +121,10 @@ class TaskExport extends Base
      */
     protected function format(array &$task)
     {
-        $task['is_active'] = $task['is_active'] == TaskModel::STATUS_OPEN ? e('Open') : e('Closed');
-
+        if($task['is_active'] != ''){
+           $task['is_active'] = $task['is_active'] == TaskModel::STATUS_OPEN ? e('Open') : e('Closed');
+        }
+       
         $task = $this->dateParser->format(
             $task,
             array('date_due', 'date_modification', 'date_creation', 'date_started', 'date_completed'),
@@ -135,7 +140,7 @@ class TaskExport extends Base
      * @access protected
      * @return string[]
      */
-    protected function getColumns($id, $title, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent)
+    protected function getColumns($id, $title, $description, $column, $status, $due_date, $creation_date, $start_date, $time_estimated, $time_spent)
     {
       $columns = [];
 
@@ -145,6 +150,9 @@ class TaskExport extends Base
       if($title){
         array_push($columns, e('Title'));
       } 
+      if($description){
+        array_push($columns, e('Description'));
+      }
       if($column){
         array_push($columns, e('Column'));
       }
@@ -167,6 +175,6 @@ class TaskExport extends Base
         array_push($columns, e('Time spent'));
       }
 
-        return array(...$columns);
+      return array(...$columns);
     }
 }
