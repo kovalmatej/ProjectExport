@@ -3,7 +3,9 @@
 <p class="alert alert-info"><?= t('This report contains all tasks information for the given date range.') ?></p>
 
 <form class="js-modal-ignore-form" method="post"
-  action="<?= $this->url->href('ProjectExportController', 'tasks', array('project_id' => $project['id'], 'plugin' => 'ProjectExport')) ?>"
+  action="<?= $this->url->href('ProjectExportController',
+                               'tasks', array('project_id' => $project['id'], 
+                               'plugin' => 'ProjectExport')) ?>"
   autocomplete="off">
   <div class="form-top">
     <div class="form-left">
@@ -26,15 +28,16 @@
       <?= $this->form->date(t('End date'), 'to', $values) ?>
     </div>
   </div>
-
-
   <div>
     <div class="form-actions">
       <button type="submit" class="btn btn-blue js-form-export"><?= t('Export') ?></button>
       <?= t('or') ?>
-      <?= $this->url->link(t('cancel'), 'ProjectExportController',  'tasks', array('project_id' => $project['id'], 'plugin' => 'ProjectExport'), false, 'js-modal-close') ?>
+      <?= $this->url->link(t('cancel'), 
+                            'ProjectExportController',
+                            'tasks', array('project_id' => $project['id'],
+                            'plugin' => 'ProjectExport'),
+                            false,
+                            'js-modal-close') ?>
     </div>
   </div>
-
-
 </form>
