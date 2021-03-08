@@ -71,7 +71,6 @@ class ProjectExportController extends BaseController
                       color: black;
                     }
                   </style>";
-                $table .= $styles; // Add CSS
                 $i = 0; // For identifying first row
                 $hoursIndex = 0; // Index of column with hours
                 $estimatedHoursIndex = 0; // Index of column with estimated hours
@@ -115,7 +114,9 @@ class ProjectExportController extends BaseController
                             if ($cell == "Done" || $cell == "Finished") { // Check wheter task is in Done
                                 $done = true;
                             } // Formats date from date columns from Y-m-d H-m-s to d-m-Y
-                            if ((($creationDateIndex != 0 && $j == $creationDateIndex) || ($startDateIndex != 0 && $j == $startDateIndex) || $dueDateIndex != 0 && $j == $dueDateIndex) && $j != 0) {
+                            if ((($creationDateIndex != 0 && $j == $creationDateIndex) 
+                                  || ($startDateIndex != 0 && $j == $startDateIndex) 
+                                  || $dueDateIndex != 0 && $j == $dueDateIndex) && $j != 0) {
                                 $date = date_create($cell);
                                 $table .= "<td>" . date_format($date, "d-m-Y") . "</td> ";
                             } else {
@@ -160,9 +161,9 @@ class ProjectExportController extends BaseController
                 }
 
                 $this->response->html( // Final table
-                    "<table class='export-table'>" .
+                    "<!DOCTYPE html><html><head>" . $styles . "<meta charset='UTF-8'></head><body><table class='export-table'>" .
                     $table . $sumRow
-                    . "</table>"
+                    . "</table></body>"
                 );
 
                 //$this->response->withFileDownload($filename.'.csv');
