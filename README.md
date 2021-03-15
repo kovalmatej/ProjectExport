@@ -1,7 +1,7 @@
 ProjectExport
 ==============================
 
-Add option to export chosen data from project in form of HTML table.
+Add option to export chosen data from project in form of HTML table. Also adds clickable title of project.
 
 Author
 ------
