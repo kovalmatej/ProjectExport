@@ -10,6 +10,7 @@ class Plugin extends Base
     public function initialize()
     {
         $this->template->setTemplateOverride('export/tasks', 'ProjectExport:export/tasks');
+        $this->template->setTemplateOverride('header/title', 'ProjectExport:header/title');
         $this->hook->on("template:layout:css", array("template" => "plugins/ProjectExport/Assets/ProjectOverview.css"));
     }
 
